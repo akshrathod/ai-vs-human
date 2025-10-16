@@ -1,0 +1,24 @@
+# Core
+python-dotenv
+numpy
+pandas
+scikit-learn
+matplotlib
+tqdm
+
+# NLP & similarity
+nltk
+sentence-transformers
+torch
+
+# Scraping (pick what you use)
+requests
+beautifulsoup4
+selenium            # if you plan to drive a browser
+
+# OpenAI
+openai
+tenacity            # retries/backoff for API calls
+
+# File formats
+pyarrow             # for fast parquet/csv IO (optional but nice)
