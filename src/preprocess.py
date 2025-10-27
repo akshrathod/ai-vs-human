@@ -19,6 +19,7 @@ stop_words = set(stopwords.words('english'))
 
 import re
 nltk.download('averaged_perceptron_tagger')
+nltk.download('averaged_perceptron_tagger_eng')
 nltk.download('punkt')
 nltk.download('wordnet')
 
