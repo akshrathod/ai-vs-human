@@ -17,6 +17,23 @@ import matplotlib.pyplot as plt
 import warnings
 warnings.filterwarnings('ignore')
 
+import nltk
+nltk.download('averaged_perceptron_tagger')
+
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.preprocessing import MinMaxScaler
+
+import scipy
+from sklearn.metrics import precision_recall_fscore_support, \
+classification_report, roc_curve, auc, precision_recall_curve, confusion_matrix
+from sklearn.naive_bayes import MultinomialNB
+from sklearn import svm
+
+from sklearn.feature_selection import SelectKBest
+from sklearn.feature_selection import mutual_info_classif
+from sklearn.metrics import mutual_info_score
+
 
 # In[2]:
 
@@ -34,9 +51,6 @@ for col in ["Question", "Human Answer", "ChatGPT Answer"]:
 
 # In[3]:
 
-
-import nltk
-nltk.download('averaged_perceptron_tagger')
 
 def gram_mistakes(tokens):
 
@@ -131,9 +145,6 @@ axes[1].set_title('Percentage of Common Grammar Mistakes in ChatGPT Answers');
 
 # In[6]:
 
-
-import nltk
-nltk.download('averaged_perceptron_tagger')
 
 def pos_ratio(tokens):
 
@@ -314,8 +325,6 @@ classification_df_nn
 # In[17]:
 
 
-from sklearn.model_selection import train_test_split
-
 # Split the data into training and testing sets
 train_data, test_data = train_test_split(classification_df, test_size = 0.2, random_state = 42, shuffle = True)
 
@@ -338,22 +347,9 @@ test_data.head()
 
 # ### D) Feature Matrix
 
-# In[20]:
-
-
-from sklearn.feature_extraction.text import TfidfVectorizer
-from sklearn.preprocessing import MinMaxScaler
-
-import scipy
-from sklearn.metrics import precision_recall_fscore_support, \
-classification_report, roc_curve, auc, precision_recall_curve, confusion_matrix
-from sklearn.naive_bayes import MultinomialNB
-from sklearn import svm
-
-
 # #### Extra Features
 
-# In[21]:
+# In[20]:
 
 
 def get_features(tokens):
@@ -376,7 +372,7 @@ def get_features(tokens):
 
 # #### TF-IDF
 
-# In[22]:
+# In[21]:
 
 
 def compute_tfidf(train_df, test_df = None, stop_words = None, min_df = 1):
@@ -400,7 +396,7 @@ def compute_tfidf(train_df, test_df = None, stop_words = None, min_df = 1):
 # #### Combined Features
 # 
 
-# In[23]:
+# In[22]:
 
 
 def combined_features(train_df, test_df = None, stop_words = None, min_df = 1):
@@ -434,12 +430,8 @@ def combined_features(train_df, test_df = None, stop_words = None, min_df = 1):
 
 # ## Mutual Information Test to find Importance of Features
 
-# In[24]:
+# In[23]:
 
-
-from sklearn.feature_selection import SelectKBest
-from sklearn.feature_selection import mutual_info_classif
-from matplotlib import pyplot
 
 def mutual_info_test(X_train, y_train, k_value, X_test = None, transform_test = False):
  # configure to select all features
@@ -456,17 +448,13 @@ def mutual_info_test(X_train, y_train, k_value, X_test = None, transform_test = 
     return X_train_fs, X_test_fs, fs
 
 
-# In[25]:
+# In[24]:
 
-
-from sklearn.metrics import mutual_info_score
-import pandas as pd
 
 feature_vect, feature_names = combined_features(classification_df['Answer'], test_df=None, stop_words=None, min_df=1)
 
 
-
-# In[26]:
+# In[25]:
 
 
  # Mutual information score for all the features
@@ -476,16 +464,16 @@ _,_,mi_scores = mutual_info_test(feature_vect, classification_df['Target'],False
 sorted_scores = pd.Series(mi_scores.scores_, name='Scores', index=feature_names).sort_values(ascending=False)
 
 
-# In[27]:
+# In[26]:
 
 
-pyplot.barh(sorted_scores[:20].index, sorted_scores[:20].values, color = 'cadetblue')
-pyplot.title("Top 20 Features - Mutual Information Score")
+plt.barh(sorted_scores[:20].index, sorted_scores[:20].values, color = 'cadetblue')
+plt.title("Top 20 Features - Mutual Information Score")
 plt.gca().invert_yaxis()
-pyplot.show()
+plt.show()
 
 
-# In[28]:
+# In[27]:
 
 
 # Columns that contain lists
@@ -499,7 +487,7 @@ for col in list_cols:
 classification_df.to_excel("train_test_data.xlsx", index=False)
 
 
-# In[29]:
+# In[28]:
 
 
 # Storing the train test data for neural networks in excel file
